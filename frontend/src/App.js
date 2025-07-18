@@ -42,6 +42,13 @@ function App() {
     }
   };
 
+  const handleReset = () => {
+    setFile(null);
+    setResult(null);
+    setPreviewUrl(null);
+    setLoading(false);
+  };
+
   return (
     <div className="main-frame">
       {toast && <div className="toast">Upload Success ✅</div>}
@@ -49,21 +56,34 @@ function App() {
       {!result ? (
         <div className="card">
           <h2 className="title">AI Pneumonia Detector</h2>
-          <label htmlFor="file-upload" className="upload-label">
-            <FontAwesomeIcon icon={faUpload} className="upload-icon" />
-            <span>Click to Upload X-ray Image</span>
-          </label>
-          <input
-            type="file"
-            id="file-upload"
-            accept="image/*"
-            onChange={handleUpload}
-            style={{ display: 'none' }}
-          />
-          {file && (
-            <button className="analyze-btn" onClick={handleAnalyze} disabled={loading}>
-              {loading ? 'Analyzing...' : 'Analyze'}
-            </button>
+          {!file ? (
+            <>
+              <label htmlFor="file-upload" className="upload-label">
+                <FontAwesomeIcon icon={faUpload} className="upload-icon" />
+                <span>Click to Upload X-ray Image</span>
+              </label>
+              <input
+                type="file"
+                id="file-upload"
+                accept="image/*"
+                onChange={handleUpload}
+                style={{ display: 'none' }}
+              />
+            </>
+          ) : (
+            <div className="upload-preview">
+              <div className="preview-image">
+                <img src={previewUrl} alt="Uploaded X-ray preview" />
+              </div>
+              <div className="button-group">
+                <button className="analyze-btn" onClick={handleAnalyze} disabled={loading}>
+                  {loading ? 'Analyzing...' : 'Analyze'}
+                </button>
+                <button className="reset-btn" onClick={handleReset} disabled={loading}>
+                  Upload New Image
+                </button>
+              </div>
+            </div>
           )}
         </div>
       ) : (
@@ -73,6 +93,9 @@ function App() {
             <div className="result-info">
               <p><strong>Diagnosis:</strong> {result.diagnosis}</p>
               <p><strong>Confidence:</strong> {result.confidence.toFixed(2)}%</p>
+              <button className="reset-btn" onClick={handleReset} style={{marginTop: '20px'}}>
+                Try Another Image
+              </button>
             </div>
             <div className="result-image">
               <img src={previewUrl} alt="Uploaded X-ray" />
